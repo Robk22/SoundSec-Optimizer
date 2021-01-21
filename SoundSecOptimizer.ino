@@ -44,16 +44,16 @@ InfluxDBClient client(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKE
 // Data point
 Point sensor("db_status");
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(2,13,NEO_GRBW + NEO_KHZ800);
- 
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(2, 13, NEO_GRBW + NEO_KHZ800);
+
 U8G2_SH1107_SEEED_128X128_1_SW_I2C u8g2(U8G2_R0, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);
- 
+
 const int pinAdc = A0;
 
 int ledPin = 12;
- 
+
 void setup()
-{   
+{
   Serial.begin(115200);
 
   // Setup wifi
@@ -83,53 +83,53 @@ void setup()
     Serial.print("InfluxDB connection failed: ");
     Serial.println(client.getLastErrorMessage());
   }
-  
-    // Initialize Neopixel
-    pixels.begin();
-    delay(1);
-    pixels.setPixelColor(0,0,50,0,0);
-    pixels.show();
-     
-    // initialize digital pin12  as an output.
-    pinMode(ledPin, OUTPUT);
-    u8g2.begin();
+
+  // Initialize Neopixel
+  pixels.begin();
+  delay(1);
+  pixels.setPixelColor(0, 0, 50, 0, 0);
+  pixels.show();
+
+  // initialize digital pin12  as an output.
+  pinMode(ledPin, OUTPUT);
+  u8g2.begin();
 
 }
- 
+
 void loop()
-{    
-    float dB = 0;
-    String recommendation;
-    u8g2.clearBuffer();
+{
+  float dB = 0;
+  String recommendation;
+  u8g2.clearBuffer();
 
-    //Get the average dB of the last 10 intervals
-    for (int i = 0; i<10; i++){
-      dB += voltageToDecibel();
-    }
-    dB /= 10;
+  //Get the average dB of the last 10 intervals
+  for (int i = 0; i < 10; i++) {
+    dB += voltageToDecibel();
+  }
+  dB /= 10;
 
-    //Green
-    if(dB < 60) {
-      digitalWrite(ledPin, HIGH);
-      recommendation = "";
-      pixels.setPixelColor(0,0,20,0,0);
-      pixels.show();
-    } else if (dB < 80) { //Yellow
-      digitalWrite(ledPin, LOW);
-      recommendation = "";
-      pixels.setPixelColor(0,20,20,0,0);
-      pixels.show();
-    } else { //Red
-      digitalWrite(ledPin, LOW);
-      recommendation = "Leiser!";
-      pixels.setPixelColor(0,20,0,0,0);
-      pixels.show();
-    }
-    Serial.println(dB);
+  //Green
+  if (dB < 60) {
+    digitalWrite(ledPin, HIGH);
+    recommendation = "";
+    pixels.setPixelColor(0, 0, 20, 0, 0);
+    pixels.show();
+  } else if (dB < 80) { //Yellow
+    digitalWrite(ledPin, LOW);
+    recommendation = "";
+    pixels.setPixelColor(0, 20, 20, 0, 0);
+    pixels.show();
+  } else { //Red
+    digitalWrite(ledPin, LOW);
+    recommendation = "Leiser!";
+    pixels.setPixelColor(0, 20, 0, 0, 0);
+    pixels.show();
+  }
+  Serial.println(dB);
 
-    //Output to OLED Display
-     u8g2.firstPage();
-     String dBstring; 
+  //Output to OLED Display
+  u8g2.firstPage();
+  String dBstring;
   do {
     u8g2.setFont(u8g2_font_ncenB18_tf);
     dBstring = String(dB);
@@ -164,12 +164,12 @@ void loop()
 
 }
 
-float voltageToDecibel() 
- {
-    float voltageValue,dBValue;
-    voltageValue = analogRead(SoundSensorPin) / 1024.0 * VREF;
-    dBValue = voltageValue * 50.0;  //convert voltage to decibel value
-    Serial.print(dBValue,1);
-    Serial.println(" dBA"); 
-    return dBValue;
- } 
+float voltageToDecibel()
+{
+  float voltageValue, dBValue;
+  voltageValue = analogRead(SoundSensorPin) / 1024.0 * VREF;
+  dBValue = voltageValue * 50.0;  //convert voltage to decibel value
+  Serial.print(dBValue, 1);
+  Serial.println(" dBA");
+  return dBValue;
+}
