@@ -28,7 +28,7 @@ ESP8266WiFiMulti wifiMulti;
 #define WIFI_PASSWORD "xxxxxxxxxxx"
 // InfluxDB v2 server url
 #define INFLUXDB_URL "xxxxxxxxxxx"
-// InfluxDB v2 server or cloud API authentication token (Use: InfluxDB UI -> Data -> Tokens -> <select token>)
+// InfluxDB v2 server or cloud API authentication token
 #define INFLUXDB_TOKEN "xxxxxxxxxxx"
 // InfluxDB v2 organization id
 #define INFLUXDB_ORG "xxxxxxxxxxx"
@@ -44,6 +44,7 @@ InfluxDBClient client(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKE
 // Data point
 Point sensor("db_status");
 
+// Declare NeoPixel
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(2, 13, NEO_GRBW + NEO_KHZ800);
 
 U8G2_SH1107_SEEED_128X128_1_SW_I2C u8g2(U8G2_R0, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);
@@ -88,6 +89,7 @@ void setup()
   pixels.begin();
   delay(1);
   pixels.setPixelColor(0, 0, 50, 0, 0);
+  pixels.setPixelColor(1, 0, 50, 0, 0);
   pixels.show();
 
   // initialize digital pin12  as an output.
@@ -113,16 +115,19 @@ void loop()
     digitalWrite(ledPin, HIGH);
     recommendation = "";
     pixels.setPixelColor(0, 0, 20, 0, 0);
+    pixels.setPixelColor(1, 0, 20, 0, 0);
     pixels.show();
   } else if (dB < 80) { //Yellow
     digitalWrite(ledPin, LOW);
     recommendation = "";
     pixels.setPixelColor(0, 20, 20, 0, 0);
+    pixels.setPixelColor(1, 20, 20, 0, 0);
     pixels.show();
   } else { //Red
     digitalWrite(ledPin, LOW);
     recommendation = "Leiser!";
     pixels.setPixelColor(0, 20, 0, 0, 0);
+    pixels.setPixelColor(1, 20, 0, 0, 0);
     pixels.show();
   }
   Serial.println(dB);
